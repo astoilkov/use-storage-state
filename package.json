@@ -1,20 +1,32 @@
 {
-    "name": "{{data.name}}",
-    "version": "0.0.0",
-    "description": "{{data.description}}",
+    "name": "use-storage-state",
+    "version": "1.0.0",
+    "description": "React hook that you can wire with any Storage compatible API like `localStorage`, `sessionStorage`, or a custom one.",
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/astoilkov/{{data.name}}"
+        "url": "git+https://github.com/astoilkov/use-storage-state.git"
     },
     "funding": "https://github.com/sponsors/astoilkov",
+    "homepage": "https://github.com/astoilkov/use-storage-state",
     "author": {
         "name": "Antonio Stoilkov",
         "email": "hello@astoilkov.com",
         "url": "https://astoilkov.com"
     },
     "keywords": [
-        "{{data.keywords}}"
+        "react",
+        "hook",
+        "Storage",
+        "localStorage",
+        "sessionStorage",
+        "persistent",
+        "state",
+        "useState",
+        "hooks",
+        "local storage",
+        "session storage",
+        "store"
     ],
     "type": "module",
     "exports": {
@@ -22,13 +34,15 @@
         "default": "./index.js"
     },
     "sideEffects": false,
-    "engines": {
-        "node": ">=16"
-    },
     "scripts": {
         "build": "tsc",
+        "size": "yarn build && size-limit",
         "test": "yarn build && vitest run --coverage",
-        "release": "yarn build && np"
+        "release": "yarn build && np",
+        "prettier": "prettier --write --config .prettierrc.yaml {*.ts,*.json}"
+    },
+    "engines": {
+        "node": ">=14"
     },
     "files": [
         "index.js",
@@ -36,12 +50,48 @@
         "src/**/*.js",
         "src/**/*.d.ts"
     ],
+    "peerDependencies": {
+        "react": ">=18",
+        "react-dom": ">=18"
+    },
     "devDependencies": {
+        "@size-limit/preset-small-lib": "^11.1.1",
+        "@testing-library/react": "^14.0.0",
+        "@types/react": "^18.2.67",
+        "@types/react-dom": "^18.2.22",
+        "@typescript-eslint/eslint-plugin": "^7.2.0",
+        "@typescript-eslint/parser": "^7.2.0",
         "@vitest/coverage-v8": "^1.4.0",
-        "jsdom": "^24.0.0",
-        "np": "^10.0.1",
+        "confusing-browser-globals": "^1.0.11",
+        "eslint": "^8.21.0",
+        "eslint-config-strictest": "^0.8.1",
+        "eslint-formatter-pretty": "^5.0.0",
+        "eslint-plugin-promise": "^6.0.0",
+        "eslint-plugin-react": "^7.29.4",
+        "eslint-plugin-react-hooks": "^4.5.0",
+        "eslint-plugin-unicorn": "^43.0.2",
+        "jsdom": "^22.1.0",
+        "np": "^7.6.3",
         "prettier": "^3.2.5",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-test-renderer": "^18.1.0",
+        "size-limit": "^11.1.1",
+        "superjson": "^2.2.1",
         "typescript": "^5.4.2",
         "vitest": "^1.4.0"
-    }
+    },
+    "size-limit": [
+        {
+            "name": "import *",
+            "path": "index.js",
+            "limit": "1.75 kB",
+            "brotli": false
+        },
+        {
+            "name": "import *",
+            "path": "index.js",
+            "limit": "800 B"
+        }
+    ]
 }
