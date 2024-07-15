@@ -1,6 +1,6 @@
 # `use-storage-state`
 
-> React hook that you can wire with any [Storage](https://developer.mozilla.org/en-US/docs/Web/API/Storage) compatible API like `localStorage`, `sessionStorage`, or a custom one.
+> React hook for any [Storage](https://developer.mozilla.org/en-US/docs/Web/API/Storage) compatible API like `localStorage`, `sessionStorage`, or a custom one.
 
 [![Downloads](https://img.shields.io/npm/dm/use-storage-state)](https://www.npmjs.com/package/use-storage-state)
 [![Gzipped Size](https://img.shields.io/bundlephobia/minzip/use-storage-state)](https://bundlephobia.com/result?p=use-storage-state)
@@ -15,8 +15,9 @@ npm install use-storage-state
 ## Why
 
 - SSR support.
-- Works with React 18 concurrent rendering and React 19.
+- Works with React 19 and React 18 concurrent rendering.
 - Handles the `Window` [`storage`](https://developer.mozilla.org/en-US/docs/Web/API/Window/storage_event) event and updates changes across browser tabs, windows, and iframe's. Disable with `storageSync: false`.
+- I've actively maintained [`use-local-storage-state`](https://github.com/astoilkov/use-local-storage-state) (400k downloads per month) for the past 4 years.
 - Aiming for high-quality with [my open-source principles](https://astoilkov.com/my-open-source-principles).
 
 ## Usage
@@ -93,7 +94,7 @@ export default function Todos() {
 <summary>Why my component renders twice?</summary>
 <p></p>
 
-If you are hydrating your component (for example, if you are using Next.js), your component might re-render twice. This is behavior specific to React and not to this library. It's caused by the `useSyncExternalStore()` hook. There is no workaround. This has been discussed in the issues: https://github.com/astoilkov/use-storage-state/issues/56.
+If you are hydrating your component (for example, if you are using Next.js), your component might re-render twice. This is behavior specific to React and not to this library. It's caused by the `useSyncExternalStore()` hook. There is no workaround.
 
 If you want to know if you are currently rendering the server value you can use this helper function:
 ```ts
