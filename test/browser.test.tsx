@@ -634,4 +634,43 @@ describe('useLocalStorageState()', () => {
             expect(value).not.toBe(undefined)
         })
     })
+
+    describe("storage option", () => {
+        test('switching between two storage values', () => {
+            const { result, rerender } = renderHook(({ memory }: { memory: 'session' | 'local'}) =>
+                useStorageState<number>('count', {
+                    defaultValue: 0,
+                    storage: memory === 'session' ? sessionStorage : localStorage,
+                }),
+                {
+                    initialProps: { memory: 'session' },
+                }
+            )
+
+            const [count] = result.current
+            expect(count).toBe(0)
+
+            act(() => {
+                const [, setCount] = result.current
+                setCount(1)
+            })
+
+            expect(sessionStorage.getItem('count')).toBe('1')
+            expect(localStorage.getItem('count')).toBe(null)
+
+            rerender({ memory: 'local' })
+
+            expect(sessionStorage.getItem('count')).toBe('1')
+            expect(localStorage.getItem('count')).toBe('0')
+
+            act(() => {
+                const [, setCount] = result.current
+                setCount(2)
+            })
+
+            expect(sessionStorage.getItem('count')).toBe('1')
+            expect(localStorage.getItem('count')).toBe('2')
+
+        })
+    })
 })
