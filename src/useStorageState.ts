@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore
 export type StorageStateOptions<T> = {
     defaultValue?: T | (() => T)
     storage?: Storage
-    storageSync?: boolean
+    sync?: boolean
     serializer?: {
         stringify: (value: unknown) => string
         parse: (value: string) => unknown
@@ -41,7 +41,7 @@ export default function useStorageState<T = undefined>(
         key,
         defaultValue,
         options?.storage,
-        options?.storageSync,
+        options?.sync,
         serializer?.parse,
         serializer?.stringify,
     )
@@ -51,7 +51,7 @@ function useStorage<T>(
     key: string,
     defaultValue: T | undefined,
     storage: Storage = goodTry(() => localStorage) ?? sessionStorage,
-    storageSync: boolean = true,
+    sync: boolean = true,
     parse: (value: string) => unknown = parseJSON,
     stringify: (value: unknown) => string = JSON.stringify,
 ): StorageState<T | undefined> {
@@ -145,7 +145,7 @@ function useStorage<T>(
     // - the `storage` event is called only in all tabs, windows, iframe's except the one that
     //   triggered the change
     useEffect(() => {
-        if (!storageSync) {
+        if (!sync) {
             return undefined
         }
 
@@ -158,7 +158,7 @@ function useStorage<T>(
         window.addEventListener('storage', onStorage)
 
         return (): void => window.removeEventListener('storage', onStorage)
-    }, [key, storage, storageSync])
+    }, [key, storage, sync])
 
     return useMemo(
         () => [

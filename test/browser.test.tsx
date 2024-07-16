@@ -564,7 +564,7 @@ describe('useLocalStorageState()', () => {
             const { result } = renderHook(() =>
                 useStorageState('todos', {
                     defaultValue: ['first', 'second'],
-                    storageSync: false,
+                    sync: false,
                 }),
             )
 
