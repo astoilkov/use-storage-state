@@ -129,7 +129,7 @@ Default: `undefined`
 
 The default value. You can think of it as the same as `useState(defaultValue)`.
 
-### `options.storage`
+#### `options.storage`
 
 Type: [`Storage`](https://developer.mozilla.org/en-US/docs/Web/API/Storage)
 
