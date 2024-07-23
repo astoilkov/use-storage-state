@@ -2,7 +2,6 @@
 
 > React hook for any [Storage](https://developer.mozilla.org/en-US/docs/Web/API/Storage) compatible API like `localStorage`, `sessionStorage`, or a custom one.
 
-[![Downloads](https://img.shields.io/npm/dm/use-storage-state)](https://www.npmjs.com/package/use-storage-state)
 [![Gzipped Size](https://img.shields.io/bundlephobia/minzip/use-storage-state)](https://bundlephobia.com/result?p=use-storage-state)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/astoilkov/use-storage-state/main.yml?branch=main)](https://github.com/astoilkov/use-storage-state/actions/workflows/main.yml)
 
