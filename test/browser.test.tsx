@@ -58,7 +58,10 @@ describe('useLocalStorageState()', () => {
     })
 
     test(`initial state is written to localStorage`, () => {
-        renderHook(() => useStorageState('todos', { defaultValue: ['first', 'second'] }))
+        renderHook(() => useStorageState('todos', {
+            storeDefault: true,
+            defaultValue: ['first', 'second']
+        }))
 
         expect(localStorage.getItem('todos')).toStrictEqual(JSON.stringify(['first', 'second']))
     })
@@ -371,7 +374,10 @@ describe('useLocalStorageState()', () => {
         let key = 'todos1'
 
         const { rerender } = renderHook(() =>
-            useStorageState(key, { defaultValue: ['first', 'second'] }),
+            useStorageState(key, {
+                storeDefault: true,
+                defaultValue: ['first', 'second']
+            }),
         )
 
         key = 'todos2'
@@ -640,6 +646,7 @@ describe('useLocalStorageState()', () => {
             const { result, rerender } = renderHook(({ memory }: { memory: 'session' | 'local'}) =>
                 useStorageState<number>('count', {
                     defaultValue: 0,
+                    storeDefault: true,
                     storage: memory === 'session' ? sessionStorage : localStorage,
                 }),
                 {
