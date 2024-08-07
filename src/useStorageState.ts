@@ -5,6 +5,7 @@ export type StorageStateOptions<T> = {
     defaultValue?: T | (() => T)
     storage?: Storage
     sync?: boolean
+    storeDefault?: boolean
     serializer?: {
         stringify: (value: unknown) => string
         parse: (value: string) => unknown
@@ -42,6 +43,7 @@ export default function useStorageState<T = undefined>(
         defaultValue,
         options?.storage,
         options?.sync,
+        options?.storeDefault,
         serializer?.parse,
         serializer?.stringify,
     )
@@ -52,6 +54,7 @@ function useStorage<T>(
     defaultValue: T | undefined,
     storage: Storage = goodTry(() => localStorage) ?? sessionStorage,
     sync: boolean = true,
+    storeDefault: boolean = false,
     parse: (value: string) => unknown = parseJSON,
     stringify: (value: unknown) => string = JSON.stringify,
 ): StorageState<T | undefined> {
@@ -101,7 +104,7 @@ function useStorage<T>(
             //   issues that were caused by incorrect initial and secondary implementations:
             //   - https://github.com/astoilkov/use-local-storage-state/issues/30
             //   - https://github.com/astoilkov/use-local-storage-state/issues/33
-            if (defaultValue !== undefined && string === null) {
+            if (storeDefault && defaultValue !== undefined && string === null) {
                 // reasons for `localStorage` to throw an error:
                 // - maximum quota is exceeded
                 // - under Mobile Safari (since iOS 5) when the user enters private mode
