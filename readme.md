@@ -144,6 +144,14 @@ Default: `true`
 
 Setting to `false` doesn't subscribe to the [Window storage event](https://developer.mozilla.org/en-US/docs/Web/API/Window/storage_event). If you set to `false`, updates won't be synchronized across tabs, windows and iframes.
 
+#### `options.storeDefault`
+
+Type: `boolean`
+
+Default: `false`
+
+Setting to `true` calls `storage.setItem()` for the default value so the default value is persisted in `Storage` after the first render of the hook.
+
 #### `options.serializer`
 
 Type: `{ stringify, parse }`
