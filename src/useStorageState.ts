@@ -144,6 +144,11 @@ function useStorage<T>(
         [key, storage, stringify],
     )
 
+    const removeItem = useCallback(() => {
+        goodTry(() => storage.removeItem(key))
+        triggerCallbacks(key)
+    }, [key, storage])
+
     // - syncs change across tabs, windows, iframes
     // - the `storage` event is called only in all tabs, windows, iframe's except the one that
     //   triggered the change
@@ -167,12 +172,9 @@ function useStorage<T>(
         () => [
             value,
             setState,
-            (): void => {
-                goodTry(() => storage.removeItem(key))
-                triggerCallbacks(key)
-            },
+            removeItem,
         ],
-        [value, setState, storage, key],
+        [value, setState, removeItem],
     )
 }
 
