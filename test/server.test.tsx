@@ -1,22 +1,24 @@
-import util from 'node:util'
-import ReactDOM from 'react-dom/server'
-import React, { MutableRefObject } from 'react'
-import useStorageState from '../src/useStorageState.js'
-import { beforeEach, describe, expect, test, vi } from 'vitest'
+import util from "node:util";
+import ReactDOM from "react-dom/server";
+import React, { MutableRefObject } from "react";
+import useStorageState from "../src/useStorageState.js";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
-function renderHookOnServer<T>(useHook: () => T): { result: MutableRefObject<T> } {
+function renderHookOnServer<T>(useHook: () => T): {
+    result: MutableRefObject<T>;
+} {
     const result: MutableRefObject<T> = {
         current: undefined!,
-    }
+    };
 
     function Component() {
-        result.current = useHook()
-        return null
+        result.current = useHook();
+        return null;
     }
 
-    ReactDOM.renderToString(<Component />)
+    ReactDOM.renderToString(<Component />);
 
-    return { result }
+    return { result };
 }
 
 beforeEach(() => {
@@ -34,76 +36,80 @@ beforeEach(() => {
     // - "Warning: Cannot update a component (`Component`) while rendering a different component
     //   (`Component`). To locate the bad setState() call inside `Component`, follow the stack trace
     //   as described in https://reactjs.org/link/setstate-in-render"
-    vi.spyOn(console, 'error').mockImplementation((format: string, ...args: any[]) => {
-        throw new Error(util.format(format, ...args))
-    })
-})
+    vi.spyOn(console, "error").mockImplementation(
+        (format: string, ...args: any[]) => {
+            throw new Error(util.format(format, ...args));
+        },
+    );
+});
 
-describe('useLocalStorageState()', () => {
-    describe('SSR support', () => {
-        test('defaultValue accepts lazy initializer (like useState)', () => {
+describe("useLocalStorageState()", () => {
+    describe("SSR support", () => {
+        test("defaultValue accepts lazy initializer (like useState)", () => {
             const { result } = renderHookOnServer(() =>
-                useStorageState('todos', {
-                    defaultValue: () => ['first', 'second'],
+                useStorageState("todos", {
+                    defaultValue: () => ["first", "second"],
                 }),
-            )
+            );
 
-            const [todos] = result.current
-            expect(todos).toStrictEqual(['first', 'second'])
-        })
+            const [todos] = result.current;
+            expect(todos).toStrictEqual(["first", "second"]);
+        });
 
-        test('returns default value on the server', () => {
+        test("returns default value on the server", () => {
             const { result } = renderHookOnServer(() =>
-                useStorageState('todos', {
-                    defaultValue: ['first', 'second'],
+                useStorageState("todos", {
+                    defaultValue: ["first", "second"],
                 }),
-            )
+            );
 
-            expect(result.current[0]).toEqual(['first', 'second'])
-        })
+            expect(result.current[0]).toEqual(["first", "second"]);
+        });
 
-        test('returns default value on the server', () => {
-            const { result } = renderHookOnServer(() => useStorageState('todos'))
+        test("returns default value on the server", () => {
+            const { result } = renderHookOnServer(() =>
+                useStorageState("todos"),
+            );
 
-            expect(result.current[0]).toEqual(undefined)
-        })
+            expect(result.current[0]).toEqual(undefined);
+        });
 
         test(`setValue() on server doesn't throw`, () => {
             const { result } = renderHookOnServer(() =>
-                useStorageState('number', {
+                useStorageState("number", {
                     defaultValue: 0,
                 }),
-            )
+            );
 
-            const setValue = result.current[1]
-            expect(setValue).not.toThrow()
-        })
+            const setValue = result.current[1];
+            expect(setValue).not.toThrow();
+        });
 
         test(`removeItem() on server doesn't throw`, () => {
             const { result } = renderHookOnServer(() =>
-                useStorageState('number', {
+                useStorageState("number", {
                     defaultValue: 0,
                 }),
-            )
+            );
 
-            const removeItem = result.current[2]
-            expect(removeItem).not.toThrow()
-        })
+            const removeItem = result.current[2];
+            expect(removeItem).not.toThrow();
+        });
 
-        test('can call mutation methods without throwing and without actually mutating the data', () => {
+        test("can call mutation methods without throwing and without actually mutating the data", () => {
             const { result } = renderHookOnServer(() => {
-                const hook = useStorageState('number', {
+                const hook = useStorageState("number", {
                     defaultValue: 0,
-                })
-                const [, setValue, removeItem] = hook
-                setValue(1)
-                removeItem()
-                return hook
-            })
-            const hook = result.current
+                });
+                const [, setValue, removeItem] = hook;
+                setValue(1);
+                removeItem();
+                return hook;
+            });
+            const hook = result.current;
 
-            const [value] = hook
-            expect(value).toBe(0)
-        })
-    })
-})
+            const [value] = hook;
+            expect(value).toBe(0);
+        });
+    });
+});
