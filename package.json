@@ -1,6 +1,6 @@
 {
     "name": "use-storage-state",
-    "version": "4.0.0",
+    "version": "5.0.0",
     "description": "React hook that you can wire with any Storage compatible API like `localStorage`, `sessionStorage`, or a custom one.",
     "license": "MIT",
     "repository": {
