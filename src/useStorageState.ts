@@ -1,9 +1,10 @@
+import memoryStorage from "./memoryStorage";
 import type { Dispatch, SetStateAction } from 'react'
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 
 export type StorageStateOptions<T> = {
     defaultValue?: T | (() => T)
-    storage?: Storage
+    storage?: StorageLike
     sync?: boolean
     storeDefault?: boolean
     serializer?: {
@@ -19,6 +20,12 @@ export type StorageState<T> = [
     setState: Dispatch<SetStateAction<T>>,
     removeItem: () => void,
 ]
+
+interface StorageLike {
+    getItem(key: string): string | null
+    setItem(key: string, value: string): void
+    removeItem(key: string): void
+}
 
 export default function useStorageState(
     key: string,
@@ -41,7 +48,10 @@ export default function useStorageState<T = undefined>(
     return useStorage(
         key,
         defaultValue,
-        options?.storage,
+        options?.storage
+            ?? goodTry(() => localStorage)
+            ?? goodTry(() => sessionStorage)
+            ?? memoryStorage,
         options?.sync,
         options?.storeDefault,
         serializer?.parse,
@@ -52,7 +62,7 @@ export default function useStorageState<T = undefined>(
 function useStorage<T>(
     key: string,
     defaultValue: T | undefined,
-    storage: Storage = goodTry(() => localStorage) ?? sessionStorage,
+    storage: StorageLike,
     sync: boolean = true,
     storeDefault: boolean = false,
     parse: (value: string) => unknown = parseJSON,

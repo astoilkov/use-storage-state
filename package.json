@@ -85,13 +85,13 @@
         {
             "name": "import *",
             "path": "index.js",
-            "limit": "1.5 kB",
+            "limit": "1.7 kB",
             "brotli": false
         },
         {
             "name": "import *",
             "path": "index.js",
-            "limit": "700 B"
+            "limit": "750 B"
         }
     ]
 }

@@ -2,12 +2,13 @@
  * @vitest-environment jsdom
  */
 
-import util from 'node:util'
-import superjson from 'superjson'
-import { act, render, renderHook } from '@testing-library/react'
-import React, { useEffect, useLayoutEffect, useMemo } from 'react'
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import useStorageState from '../src/useStorageState.js'
+import util from "node:util";
+import superjson from "superjson";
+import { act, render, renderHook } from "@testing-library/react";
+import React, { useEffect, useLayoutEffect, useMemo } from "react";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import useStorageState from "../src/useStorageState.js";
+import memoryStorage from "../src/memoryStorage";
 
 beforeEach(() => {
     // Throw an error when `console.error()` is called. This is especially useful in a React tests
@@ -24,10 +25,12 @@ beforeEach(() => {
     // - "Warning: Cannot update a component (`Component`) while rendering a different component
     //   (`Component`). To locate the bad setState() call inside `Component`, follow the stack trace
     //   as described in https://reactjs.org/link/setstate-in-render"
-    vi.spyOn(console, 'error').mockImplementation((format: string, ...args: any[]) => {
-        throw new Error(util.format(format, ...args))
-    })
-})
+    vi.spyOn(console, "error").mockImplementation(
+        (format: string, ...args: any[]) => {
+            throw new Error(util.format(format, ...args));
+        },
+    );
+});
 
 afterEach(() => {
     try {
@@ -163,6 +166,29 @@ describe('useLocalStorageState()', () => {
 
         const { result } = renderHook(() =>
             useStorageState('set-item-will-throw', { defaultValue: '' }),
+        )
+
+        expect(() => {
+            act(() => {
+                const setValue = result.current[1]
+                setValue('will-throw')
+            })
+        }).not.toThrow()
+    })
+
+    // https://github.com/astoilkov/use-storage-state/issues/2
+    test('Chrome option to not allow sites to save data on device', () => {
+        // in Safari, even just accessing `localStorage` throws "SecurityError: The operation is
+        // insecure."
+        vi.spyOn(window, 'localStorage', 'get').mockImplementation(() => {
+            throw new Error()
+        })
+        vi.spyOn(window, 'sessionStorage', 'get').mockImplementation(() => {
+            throw new Error()
+        })
+
+        const { result } = renderHook(() =>
+            useStorageState<string | undefined>('set-item-will-throw', { defaultValue: '' }),
         )
 
         expect(() => {
@@ -678,6 +704,30 @@ describe('useLocalStorageState()', () => {
             expect(sessionStorage.getItem('count')).toBe('1')
             expect(localStorage.getItem('count')).toBe('2')
 
+        })
+
+        test('memoryStorage', () => {
+            const { result } = renderHook(() =>
+                useStorageState<number>('count', {
+                    storage: memoryStorage,
+                })
+            )
+            const [,setCount,removeItem] = result.current
+
+            act(() => {
+                removeItem()
+            })
+            expect(result.current[0]).toBe(undefined)
+
+            act(() => {
+                setCount(1)
+            })
+            expect(result.current[0]).toBe(1)
+
+            act(() => {
+                setCount(undefined)
+            })
+            expect(result.current[0]).toBe(undefined)
         })
     })
 })
