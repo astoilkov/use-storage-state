@@ -16,7 +16,7 @@ npm install use-storage-state
 - SSR support.
 - Works with React 19 and React 18 concurrent rendering.
 - Handles the `Window` [`storage`](https://developer.mozilla.org/en-US/docs/Web/API/Window/storage_event) event and updates changes across browser tabs, windows, and iframe's. Disable with `sync: false`.
-- I actively maintain [`use-local-storage-state`](https://github.com/astoilkov/use-local-storage-state) (400k downloads per month) for the past 4 years.
+- I also actively maintain [`use-local-storage-state`](https://github.com/astoilkov/use-local-storage-state) (400k downloads per month) for the past 4 years.
 - Aiming for high-quality with [my open-source principles](https://astoilkov.com/my-open-source-principles).
 
 ## Usage
@@ -66,7 +66,7 @@ export default function Todos() {
 </details>
 
 <details>
-<summary id="remove-item">Removing the data from <code>localStorage</code> and resetting to the default</summary>
+<summary id="remove-item">Removing the data from <code>Storage</code> and resetting to the default</summary>
 <p></p>
 
 The `removeItem()` method will reset the value to its default and will remove the key from the `Storage`. It returns to the same state as when the hook was initially created.
