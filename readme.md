@@ -142,7 +142,7 @@ Type: `boolean`
 
 Default: `true`
 
-If `localStorage` or `sessionStorage` throw an error when accessed (possible when the browser is configured to not store any site data on device), the library uses a memory storage fallback so at least it allows for the hook to be functional. You can disable this behavior by setting this option to `false`.
+If `localStorage` or `sessionStorage` throw an error when accessed (possible when the browser is configured to not store any site data on device), the library uses a memory storage fallback to at least allow for the hook to be functional. You can disable this behavior by setting this option to `false`.
 
 #### `options.sync`
 
