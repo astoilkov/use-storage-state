@@ -128,11 +128,21 @@ The default value. You can think of it as the same as `useState(defaultValue)`.
 
 #### `options.storage`
 
-Type: [`Storage`](https://developer.mozilla.org/en-US/docs/Web/API/Storage)
+Type: `"local" | "session" | Storage`
 
-Default: `localStorage` (if `localStorage` is disabled in Safari it fallbacks to `sessionStorage`).
+Default: `"local"`
 
-You can set `localStorage`, `sessionStorage`, or other any [`Storage`](https://developer.mozilla.org/en-US/docs/Web/API/Storage) compatible class like [`memorystorage`](https://github.com/download/memorystorage).
+You can set `localStorage`, `sessionStorage`, or other any [`Storage`](https://developer.mozilla.org/en-US/docs/Web/API/Storage) compatible class.
+
+_Note:_ Prefer to use the `"local"` and `"session"` literals instead of `localStorage` or `sessionStorage` objects directly, as both can throw an error when accessed if user has configured the browser to not store any site data.
+
+#### `options.memoryFallback`
+
+Type: `boolean`
+
+Default: `true`
+
+If `localStorage` or `sessionStorage` throw an error when accessed (possible when the browser is configured to not store any site data on device), the library uses a memory storage fallback so at least it allows for the hook to be functional. You can disable this behavior by setting this option to `false`.
 
 #### `options.sync`
 
@@ -157,6 +167,18 @@ Type: `{ stringify, parse }`
 Default: `JSON`
 
 JSON does not serialize `Date`, `Regex`, or `BigInt` data.  You can pass in [superjson](https://github.com/blitz-js/superjson) or other `JSON`-compatible serialization library for more advanced serialization.
+
+#### `memoryStorage`
+
+The library exports a `memoryStorage` object that's used when the `memoryFallback` option is set to `true` (the default).
+
+```ts
+import { memoryStorage } from 'use-storage-state'
+
+memoryStorage.getItem(key)
+memoryStorage.setItem(key, value)
+memoryStorage.removeItem(key)
+```
 
 ## Related
 

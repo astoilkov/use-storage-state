@@ -8,7 +8,7 @@ import { act, render, renderHook } from "@testing-library/react";
 import React, { useEffect, useLayoutEffect, useMemo } from "react";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import useStorageState from "../src/useStorageState.js";
-import memoryStorage from "../src/memoryStorage";
+import memoryStorage from "../src/memoryStorage.js";
 
 beforeEach(() => {
     // Throw an error when `console.error()` is called. This is especially useful in a React tests
@@ -690,17 +690,14 @@ describe("useLocalStorageState()", () => {
     describe("storage option", () => {
         test("switching between two storage values", () => {
             const { result, rerender } = renderHook(
-                ({ memory }: { memory: "session" | "local" }) =>
+                ({ storage }: { storage: "session" | "local" }) =>
                     useStorageState<number>("count", {
                         defaultValue: 0,
                         storeDefault: true,
-                        storage:
-                            memory === "session"
-                                ? sessionStorage
-                                : localStorage,
+                        storage: storage,
                     }),
                 {
-                    initialProps: { memory: "session" },
+                    initialProps: { storage: "session" },
                 },
             );
 
@@ -715,7 +712,7 @@ describe("useLocalStorageState()", () => {
             expect(sessionStorage.getItem("count")).toBe("1");
             expect(localStorage.getItem("count")).toBe(null);
 
-            rerender({ memory: "local" });
+            rerender({ storage: "local" });
 
             expect(sessionStorage.getItem("count")).toBe("1");
             expect(localStorage.getItem("count")).toBe("0");
@@ -727,6 +724,22 @@ describe("useLocalStorageState()", () => {
 
             expect(sessionStorage.getItem("count")).toBe("1");
             expect(localStorage.getItem("count")).toBe("2");
+        });
+
+        test("undefined with memoryFallback: false", () => {
+            const { result } = renderHook(() =>
+                useStorageState("count", {
+                    storage: undefined,
+                    memoryFallback: false,
+                    defaultValue: 99,
+                }),
+            );
+            const [, setCount] = result.current;
+
+            act(() => {
+                setCount(100);
+            });
+            expect(result.current[0]).toBe(99);
         });
 
         test("memoryStorage", () => {
