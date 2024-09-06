@@ -1,6 +1,7 @@
+import type { MutableRefObject } from "react";
+import React from "react";
 import util from "node:util";
 import ReactDOM from "react-dom/server";
-import React, { MutableRefObject } from "react";
 import useStorageState from "../src/useStorageState.js";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
