@@ -128,7 +128,7 @@ The default value. You can think of it as the same as `useState(defaultValue)`.
 
 #### `options.storage`
 
-Type: `"local" | "session" | Storage`
+Type: `"local" | "session" | Storage | undefined`
 
 Default: `"local"`
 
@@ -136,13 +136,19 @@ You can set `localStorage`, `sessionStorage`, or other any [`Storage`](https://d
 
 _Note:_ Prefer to use the `"local"` and `"session"` literals instead of `localStorage` or `sessionStorage` objects directly, as both can throw an error when accessed if user has configured the browser to not store any site data.
 
+```ts
+const [multiplier, setMultiplier] = useStorageState('multiplier', {
+    storage: "session" // default is "local"
+})
+```
+
 #### `options.memoryFallback`
 
 Type: `boolean`
 
 Default: `true`
 
-If `localStorage` or `sessionStorage` throw an error when accessed (possible when the browser is configured to not store any site data on device), the library uses a memory storage fallback to at least allow for the hook to be functional. You can disable this behavior by setting this option to `false`.
+If you pass `undefined` to the `storage` option or `localStorage` or `sessionStorage` throw an error when accessed (possible when the browser is configured to not store any site data on device), the library uses a memory storage fallback to avoid your app from breaking completely. You can disable this behavior by setting this option to `false`.
 
 #### `options.sync`
 
