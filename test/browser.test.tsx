@@ -39,7 +39,7 @@ afterEach(() => {
     } catch {}
 });
 
-describe("useLocalStorageState()", () => {
+describe("useStorageState()", () => {
     test("defaultValue accepts lazy initializer (like useState)", () => {
         const { result } = renderHook(() =>
             useStorageState("todos", {
@@ -492,7 +492,7 @@ describe("useLocalStorageState()", () => {
         expect(queryByText(/^1$/u)).toBeTruthy();
     });
 
-    test(`calling setValue() from useLayoutEffect() should update all useLocalStorageState() instances`, () => {
+    test(`calling setValue() from useLayoutEffect() should update all useStorageState() instances`, () => {
         function App() {
             return (
                 <>

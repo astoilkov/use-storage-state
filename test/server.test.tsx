@@ -43,7 +43,7 @@ beforeEach(() => {
     );
 });
 
-describe("useLocalStorageState()", () => {
+describe("useStorageState()", () => {
     describe("SSR support", () => {
         test("defaultValue accepts lazy initializer (like useState)", () => {
             const { result } = renderHookOnServer(() =>
