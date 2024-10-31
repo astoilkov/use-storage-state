@@ -14,6 +14,7 @@ npm install use-storage-state
 ## Why
 
 - SSR support.
+- Production ready. [Used broadly across Twitch web properties](https://github.com/astoilkov/use-storage-state/issues/1#issuecomment-2344336086).
 - Works with React 19 and React 18 concurrent rendering.
 - Handles the `Window` [`storage`](https://developer.mozilla.org/en-US/docs/Web/API/Window/storage_event) event and updates changes across browser tabs, windows, and iframe's. Disable with `sync: false`.
 - I also actively maintain [`use-local-storage-state`](https://github.com/astoilkov/use-local-storage-state) (400k downloads per month) for the past 4 years.
