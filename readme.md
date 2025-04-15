@@ -191,4 +191,5 @@ memoryStorage.removeItem(key)
 
 - [`use-local-storage-state`](https://github.com/astoilkov/use-local-storage-state) — Similar to this hook but for `localStorage` only.
 - [`use-session-storage-state`](https://github.com/astoilkov/use-session-storage-state) — Similar to this hook but for `sessionStorage` only.
+- [`use-db`](https://github.com/astoilkov/use-db) — Similar to this hook but for `IndexedDB`.
 - [`local-db-storage`](https://github.com/astoilkov/local-db-storage) — Tiny wrapper around `IndexedDB` that mimics `localStorage` API.
