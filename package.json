@@ -40,7 +40,7 @@
         "test": "yarn build && vitest run --coverage",
         "test:ui": "yarn build && vitest --ui --coverage --reporter html",
         "release": "yarn build && np",
-        "prettier": "prettier --write --config .prettierrc.yaml {*.ts,*.json}"
+        "prettier": "prettier --write {*.ts,*.json}"
     },
     "engines": {
         "node": ">=14"
