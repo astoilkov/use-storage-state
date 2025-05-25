@@ -2,7 +2,6 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
     test: {
-
         globals: true,
         // run tests on root and in /test folder with .ts and .tsx extensions
         include: ["./test.ts(x)", "./test/**/**.ts(x)"],
@@ -16,8 +15,8 @@ export default defineConfig({
 
         coverage: {
             enabled: true,
-            extension: 'js',
-            include: ['src/**/*'],
+            extension: "js",
+            include: ["src/**/*"],
         },
     },
 });
