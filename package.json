@@ -93,7 +93,7 @@
         {
             "name": "import *",
             "path": "index.js",
-            "limit": "850 B"
+            "limit": "810 B"
         }
     ]
 }
