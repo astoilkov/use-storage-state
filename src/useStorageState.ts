@@ -196,19 +196,17 @@ function useStorage<T>(
     // - the `storage` event is called only in all tabs, windows, iframe's except the one that
     //   triggered the change
     useEffect(() => {
-        if (!sync) {
-            return undefined;
+        if (sync) {
+            const onStorage = (e: StorageEvent): void => {
+                if (e.key === key && e.storageArea === goodTry(() => storage)) {
+                    triggerCallbacks(key);
+                }
+            };
+
+            window.addEventListener("storage", onStorage);
+
+            return (): void => window.removeEventListener("storage", onStorage);
         }
-
-        const onStorage = (e: StorageEvent): void => {
-            if (e.key === key && e.storageArea === goodTry(() => storage)) {
-                triggerCallbacks(key);
-            }
-        };
-
-        window.addEventListener("storage", onStorage);
-
-        return (): void => window.removeEventListener("storage", onStorage);
     }, [key, storage, sync]);
 
     return useMemo(
