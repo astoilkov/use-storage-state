@@ -149,7 +149,7 @@ Type: `boolean`
 
 Default: `true`
 
-If you pass `undefined` to the `storage` option or `localStorage` or `sessionStorage` throw an error when accessed (possible when the browser is configured to not store any site data on device), the library uses a memory storage fallback to avoid your app from breaking completely. You can disable this behavior by setting this option to `false`.
+If you pass `undefined` to the `storage` option or `localStorage` or `sessionStorage` throw an error when accessed (possible when the browser is configured to not store any site data on device), the library uses a memory storage fallback to avoid your app from breaking completely. The same applies when writing a value fails (for example, when the storage quota is exceeded) — the new value is kept in memory until a later write for the same key succeeds. You can disable this behavior by setting this option to `false`.
 
 #### `options.sync`
 

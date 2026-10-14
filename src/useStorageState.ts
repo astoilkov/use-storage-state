@@ -71,6 +71,7 @@ export default function useStorageState<T = undefined>(
         key,
         defaultValue,
         resolvedStorage,
+        options?.memoryFallback,
         options?.sync,
         options?.storeDefault,
         serializer?.parse,
@@ -82,6 +83,7 @@ function useStorage<T>(
     key: string,
     defaultValue: T | undefined,
     storage: StorageLike | undefined,
+    memoryFallback: boolean = true,
     sync: boolean = true,
     storeDefault: boolean = false,
     parse: (value: string) => unknown = parseJSON,
@@ -118,7 +120,9 @@ function useStorage<T>(
             const string =
                 storage === undefined
                     ? null
-                    : goodTry(() => storage.getItem(key)) ?? null;
+                    : (unpersistedValues(storage).get(key) ??
+                      goodTry(() => storage.getItem(key)) ??
+                      null);
 
             if (string !== storageItem.current.string) {
                 let parsed: T | undefined;
@@ -178,15 +182,28 @@ function useStorage<T>(
             //   `localStorage.setItem()` will throw
             // - trying to access `localStorage` object when cookies are disabled in Safari throws
             //   "SecurityError: The operation is insecure."
-            goodTry(() => storage?.setItem(key, stringify(value)));
+            if (storage !== undefined) {
+                const values = unpersistedValues(storage);
+                goodTry(() => {
+                    // `String()` matches how `Storage` stores `undefined`
+                    const string = String(stringify(value));
+                    // the value stays in memory only when `setItem()` throws
+                    if (memoryFallback) {
+                        values.set(key, string);
+                    }
+                    storage.setItem(key, string);
+                    values.delete(key);
+                });
+            }
 
             triggerCallbacks(key);
         },
-        [key, storage, stringify],
+        [key, storage, memoryFallback, stringify],
     );
 
     const removeItem = useCallback(() => {
         if (storage !== undefined) {
+            unpersistedValues(storage).delete(key);
             goodTry(() => storage.removeItem(key));
             triggerCallbacks(key);
         }
@@ -198,7 +215,9 @@ function useStorage<T>(
     useEffect(() => {
         if (sync) {
             const onStorage = (e: StorageEvent): void => {
-                if (e.key === key && e.storageArea === goodTry(() => storage)) {
+                if (e.key === key && e.storageArea === storage) {
+                    // the other tab wrote a newer value
+                    unpersistedValues(storage).delete(key);
                     triggerCallbacks(key);
                 }
             };
@@ -213,6 +232,18 @@ function useStorage<T>(
         () => [value, setState, removeItem],
         [value, setState, removeItem],
     );
+}
+
+// values that failed to write to their storage (e.g. the quota is exceeded) — shared by all
+// instances, and preferred over the storage until a write for the same key succeeds
+const unpersisted = new WeakMap<StorageLike, Map<string, string>>();
+function unpersistedValues(storage: StorageLike): Map<string, string> {
+    let values = unpersisted.get(storage);
+    if (values === undefined) {
+        values = new Map();
+        unpersisted.set(storage, values);
+    }
+    return values;
 }
 
 // notifies all instances using the same `key` to update

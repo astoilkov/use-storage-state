@@ -164,6 +164,158 @@ describe("useStorageState()", () => {
         }).not.toThrow();
     });
 
+    // each test uses its own key because memory values last until the page reloads
+    describe("failed writes", () => {
+        const failWrites = () =>
+            vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+                throw new Error();
+            });
+
+        test("keeps the value in memory when setItem throws", () => {
+            failWrites();
+            const { result } = renderHook(() =>
+                useStorageState("failed-write-1", { defaultValue: "red" }),
+            );
+
+            act(() => {
+                const setColor = result.current[1];
+                setColor("blue");
+            });
+
+            expect(result.current[0]).toBe("blue");
+            expect(localStorage.getItem("failed-write-1")).toBe(null);
+        });
+
+        test("other instances with the same key see the value", () => {
+            failWrites();
+            const { result: resultA } = renderHook(() =>
+                useStorageState("failed-write-2", { defaultValue: "red" }),
+            );
+            const { result: resultB } = renderHook(() =>
+                useStorageState("failed-write-2", { defaultValue: "red" }),
+            );
+
+            act(() => {
+                const setColor = resultA.current[1];
+                setColor("blue");
+            });
+
+            expect(resultB.current[0]).toBe("blue");
+        });
+
+        test("a later successful write goes to the storage", () => {
+            const setItem = failWrites();
+            const { result } = renderHook(() =>
+                useStorageState("failed-write-3", { defaultValue: "red" }),
+            );
+
+            act(() => {
+                const setColor = result.current[1];
+                setColor("blue");
+            });
+            setItem.mockRestore();
+            act(() => {
+                const setColor = result.current[1];
+                setColor("green");
+            });
+
+            expect(result.current[0]).toBe("green");
+            expect(localStorage.getItem("failed-write-3")).toBe(
+                JSON.stringify("green"),
+            );
+
+            // the memory value is gone, so the storage is the source again
+            act(() => {
+                localStorage.setItem(
+                    "failed-write-3",
+                    JSON.stringify("yellow"),
+                );
+                window.dispatchEvent(
+                    new StorageEvent("storage", {
+                        key: "failed-write-3",
+                        storageArea: localStorage,
+                    }),
+                );
+            });
+            expect(result.current[0]).toBe("yellow");
+        });
+
+        test("removeItem() drops the memory value", () => {
+            failWrites();
+            const { result } = renderHook(() =>
+                useStorageState("failed-write-4", { defaultValue: "red" }),
+            );
+
+            act(() => {
+                const setColor = result.current[1];
+                setColor("blue");
+            });
+            act(() => {
+                const removeItem = result.current[2];
+                removeItem();
+            });
+
+            expect(result.current[0]).toBe("red");
+        });
+
+        test('"storage" event from another tab replaces the memory value', () => {
+            const setItem = failWrites();
+            const { result } = renderHook(() =>
+                useStorageState("failed-write-5", { defaultValue: "red" }),
+            );
+
+            act(() => {
+                const setColor = result.current[1];
+                setColor("blue");
+            });
+            setItem.mockRestore();
+            act(() => {
+                localStorage.setItem("failed-write-5", JSON.stringify("green"));
+                window.dispatchEvent(
+                    new StorageEvent("storage", {
+                        key: "failed-write-5",
+                        storageArea: localStorage,
+                    }),
+                );
+            });
+
+            expect(result.current[0]).toBe("green");
+        });
+
+        test("can keep `undefined` in memory", () => {
+            failWrites();
+            const { result } = renderHook(() =>
+                useStorageState<string | undefined>("failed-write-6", {
+                    defaultValue: "red",
+                }),
+            );
+
+            act(() => {
+                const setColor = result.current[1];
+                setColor(undefined);
+            });
+
+            expect(result.current[0]).toBe(undefined);
+        });
+
+        test("memoryFallback: false keeps the old value", () => {
+            failWrites();
+            const { result } = renderHook(() =>
+                useStorageState("failed-write-7", {
+                    defaultValue: "red",
+                    memoryFallback: false,
+                }),
+            );
+
+            act(() => {
+                const setColor = result.current[1];
+                setColor("blue");
+            });
+
+            expect(result.current[0]).toBe("red");
+        });
+    });
+
     // https://github.com/astoilkov/use-local-storage-state/issues/62
     test("simulate blocking all the cookies in Safari", () => {
         // in Safari, even just accessing `localStorage` throws "SecurityError: The operation is
